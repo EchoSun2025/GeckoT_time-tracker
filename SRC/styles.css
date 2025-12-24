@@ -765,6 +765,79 @@ kbd {
     margin-top: 4px;
 }
 
+/* ===== Reminder Settings ===== */
+.reminder-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.reminder-group {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+    padding: 16px;
+}
+
+.reminder-group h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.form-row label {
+    min-width: 80px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.form-row input[type="number"] {
+    width: 70px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 13px;
+}
+
+.form-row select {
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 13px;
+    min-width: 120px;
+}
+
+.form-row textarea {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 13px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.custom-message-row {
+    margin-top: 8px;
+}
+
+.reminder-settings .btn-primary {
+    align-self: flex-start;
+    margin-top: 10px;
+}
+
 /* ===== Tag Filter ===== */
 .tag-filter {
     background: var(--bg-secondary);
@@ -1275,7 +1348,7 @@ kbd {
     background: var(--bg-tertiary);
     border-radius: var(--radius);
     overflow-y: auto;
-    max-height: 500px;
+    max-height: 900px;
     overflow: hidden;
 }
 

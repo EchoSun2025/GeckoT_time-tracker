@@ -9,7 +9,18 @@ const DataManager = (function() {
     const KEYS = {
         RECORDS: PREFIX + 'records',
         TAGS: PREFIX + 'tags',
-        CURRENT_TIMER: PREFIX + 'current_timer'
+        CURRENT_TIMER: PREFIX + 'current_timer',
+        REMINDER_SETTINGS: PREFIX + 'reminder_settings'
+    };
+
+    // 默认提醒设置
+    const DEFAULT_REMINDER_SETTINGS = {
+        normalInterval: 90,        // 普通标签提醒间隔（分钟）
+        normalMessageMode: 'random', // 'random' 或 'custom'
+        normalCustomMessage: '',
+        excludedInterval: 30,      // 特殊标签提醒间隔（分钟）
+        excludedMessageMode: 'random',
+        excludedCustomMessage: ''
     };
 
     // 默认标签
@@ -257,6 +268,31 @@ const DataManager = (function() {
     function getTagById(id) {
         const tags = getTags();
         return tags.find(t => t.id === id);
+    }
+
+    // 获取提醒设置
+    function getReminderSettings() {
+        try {
+            const data = localStorage.getItem(KEYS.REMINDER_SETTINGS);
+            if (data) {
+                return { ...DEFAULT_REMINDER_SETTINGS, ...JSON.parse(data) };
+            }
+            return { ...DEFAULT_REMINDER_SETTINGS };
+        } catch (e) {
+            console.error('读取提醒设置失败:', e);
+            return { ...DEFAULT_REMINDER_SETTINGS };
+        }
+    }
+
+    // 保存提醒设置
+    function saveReminderSettings(settings) {
+        try {
+            localStorage.setItem(KEYS.REMINDER_SETTINGS, JSON.stringify(settings));
+            return true;
+        } catch (e) {
+            console.error('保存提醒设置失败:', e);
+            return false;
+        }
     }
 
     // 保存当前计时状态（用于页面刷新恢复）
@@ -610,6 +646,8 @@ const DataManager = (function() {
         updateTag,
         deleteTag,
         getTagById,
+        getReminderSettings,
+        saveReminderSettings,
         saveCurrentTimer,
         getCurrentTimer,
         clearCurrentTimer,

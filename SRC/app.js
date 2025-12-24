@@ -88,6 +88,13 @@ const App = (function() {
         document.body.classList.add('timing');
         state.timerInterval = setInterval(updateTimerDisplay, 1000);
         updateTimerDisplay();
+
+        // 启动提醒系统
+        try {
+            ReminderSystem.start(state.selectedTags, DataManager.getTags);
+        } catch (e) {
+            console.error('[app.js] ReminderSystem.start 错误:', e);
+        }
     }
 
     // 同步计时状态到 Electron 主进程
@@ -274,6 +281,15 @@ const App = (function() {
         elements.settingsModal.querySelector('.modal-backdrop').addEventListener('click', closeSettingsModal);
         elements.addTagSettings.addEventListener('click', openTagModal);
         elements.clearAllData.addEventListener('click', confirmClearAllData);
+
+        // 提醒设置
+        document.getElementById('save-reminder-settings').addEventListener('click', saveReminderSettings);
+        document.getElementById('normal-message-mode').addEventListener('change', (e) => {
+            document.getElementById('normal-custom-row').style.display = e.target.value === 'custom' ? 'flex' : 'none';
+        });
+        document.getElementById('excluded-message-mode').addEventListener('change', (e) => {
+            document.getElementById('excluded-custom-row').style.display = e.target.value === 'custom' ? 'flex' : 'none';
+        });
 
         // 导入区域
         elements.importArea.addEventListener('click', () => elements.importFile.click());
@@ -658,9 +674,13 @@ const App = (function() {
 
         // 开始计时更新
         state.timerInterval = setInterval(updateTimerDisplay, 1000);
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/d2388bd3-4679-4c84-a2db-f01e147c7af1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app.js:startTimer:afterInterval',message:'setInterval created',data:{intervalId:state.timerInterval},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-        // #endregion
+
+        // 启动提醒系统
+        try {
+            ReminderSystem.start(state.selectedTags, DataManager.getTags);
+        } catch (e) {
+            console.error('[app.js] ReminderSystem.start 错误:', e);
+        }
 
         showToast('计时开始', 'success');
     }
@@ -703,9 +723,7 @@ const App = (function() {
         try {
             ReminderSystem.reset();
         } catch(e) {
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/d2388bd3-4679-4c84-a2db-f01e147c7af1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app.js:stopTimer:reminderError',message:'ReminderSystem.reset error',data:{error:e.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
-            // #endregion
+            console.error('[app.js] ReminderSystem.reset 错误:', e);
         }
 
         // 更新UI
@@ -752,9 +770,6 @@ const App = (function() {
 
     // 更新计时器显示
     function updateTimerDisplay() {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/d2388bd3-4679-4c84-a2db-f01e147c7af1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app.js:updateTimerDisplay:entry',message:'updateTimerDisplay called',data:{hasStartTime:!!state.timerStartTime},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-        // #endregion
         if (!state.timerStartTime) return;
         const elapsed = Math.round((new Date() - state.timerStartTime) / 1000);
         elements.timerDisplay.textContent = DataManager.formatTime(elapsed);
@@ -765,25 +780,6 @@ const App = (function() {
         // 每 5 秒更新一次时间线视图中的正在进行记录
         if (elapsed % 5 === 0) {
             updateActiveRecordInView();
-        }
-
-        // 每 10 秒检查一次提醒（避免过于频繁）
-        if (elapsed % 10 === 0) {
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/d2388bd3-4679-4c84-a2db-f01e147c7af1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app.js:updateTimerDisplay:beforeReminder',message:'About to call ReminderSystem',data:{elapsed},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-            // #endregion
-            try {
-                ReminderSystem.checkReminder(
-                    state.isTimerRunning,
-                    state.timerStartTime,
-                    state.selectedTags,
-                    DataManager.getTags
-                );
-            } catch (e) {
-                // #region agent log
-                fetch('http://127.0.0.1:7242/ingest/d2388bd3-4679-4c84-a2db-f01e147c7af1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app.js:updateTimerDisplay:reminderError',message:'ReminderSystem error',data:{error:e.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-                // #endregion
-            }
         }
     }
 
@@ -812,6 +808,13 @@ const App = (function() {
             updateTimerBar();
             document.body.classList.add('timing');
             state.timerInterval = setInterval(updateTimerDisplay, 1000);
+
+            // 启动提醒系统
+            try {
+                ReminderSystem.start(state.selectedTags, DataManager.getTags);
+            } catch (e) {
+                console.error('[app.js] ReminderSystem.start 错误:', e);
+            }
         }
     }
 
@@ -1189,6 +1192,14 @@ const App = (function() {
             updateTimerBar();
             document.body.classList.add('timing');
             state.timerInterval = setInterval(updateTimerDisplay, 1000);
+
+            // 启动提醒系统
+            try {
+                ReminderSystem.start(state.selectedTags, DataManager.getTags);
+            } catch (e) {
+                console.error('[app.js] ReminderSystem.start 错误:', e);
+            }
+
             showToast('已开始新记录（沿用之前的描述和标签）', 'success');
         } else {
             // 没有其他记录，继续之前的记录（更新结束时间为现在）
@@ -1212,6 +1223,13 @@ const App = (function() {
             updateTimerBar();
             document.body.classList.add('timing');
             state.timerInterval = setInterval(updateTimerDisplay, 1000);
+
+            // 启动提醒系统
+            try {
+                ReminderSystem.start(state.selectedTags, DataManager.getTags);
+            } catch (e) {
+                console.error('[app.js] ReminderSystem.start 错误:', e);
+            }
             
             updateDailyReport();
             showToast('继续计时中...', 'success');
@@ -1470,6 +1488,37 @@ const App = (function() {
     function openSettingsModal() {
         elements.settingsModal.classList.remove('hidden');
         updateTagsList();
+        loadReminderSettings();
+    }
+
+    // 加载提醒设置
+    function loadReminderSettings() {
+        const settings = DataManager.getReminderSettings();
+        
+        document.getElementById('normal-interval').value = settings.normalInterval;
+        document.getElementById('normal-message-mode').value = settings.normalMessageMode;
+        document.getElementById('normal-custom-message').value = settings.normalCustomMessage || '';
+        document.getElementById('normal-custom-row').style.display = settings.normalMessageMode === 'custom' ? 'flex' : 'none';
+        
+        document.getElementById('excluded-interval').value = settings.excludedInterval;
+        document.getElementById('excluded-message-mode').value = settings.excludedMessageMode;
+        document.getElementById('excluded-custom-message').value = settings.excludedCustomMessage || '';
+        document.getElementById('excluded-custom-row').style.display = settings.excludedMessageMode === 'custom' ? 'flex' : 'none';
+    }
+
+    // 保存提醒设置
+    function saveReminderSettings() {
+        const settings = {
+            normalInterval: parseInt(document.getElementById('normal-interval').value) || 90,
+            normalMessageMode: document.getElementById('normal-message-mode').value,
+            normalCustomMessage: document.getElementById('normal-custom-message').value.trim(),
+            excludedInterval: parseInt(document.getElementById('excluded-interval').value) || 30,
+            excludedMessageMode: document.getElementById('excluded-message-mode').value,
+            excludedCustomMessage: document.getElementById('excluded-custom-message').value.trim()
+        };
+        
+        DataManager.saveReminderSettings(settings);
+        showToast('提醒设置已保存', 'success');
     }
 
     // 关闭设置模态框

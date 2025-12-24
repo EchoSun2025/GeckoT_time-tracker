@@ -331,6 +331,48 @@
                     <button id="add-tag-settings" class="btn btn-text">+ 添加新标签</button>
                 </div>
                 <div class="settings-section">
+                    <h3>🔔 提醒设置</h3>
+                    <div class="reminder-settings">
+                        <div class="reminder-group">
+                            <h4>📊 普通标签（工作/学习）</h4>
+                            <div class="form-row">
+                                <label>提醒间隔</label>
+                                <input type="number" id="normal-interval" min="10" max="180" value="90"> 分钟
+                            </div>
+                            <div class="form-row">
+                                <label>提醒方式</label>
+                                <select id="normal-message-mode">
+                                    <option value="random">随机骚话</option>
+                                    <option value="custom">自定义内容</option>
+                                </select>
+                            </div>
+                            <div class="form-row custom-message-row" id="normal-custom-row" style="display:none">
+                                <label>自定义内容</label>
+                                <textarea id="normal-custom-message" rows="2" placeholder="该休息一下了~"></textarea>
+                            </div>
+                        </div>
+                        <div class="reminder-group">
+                            <h4>🎮 特殊标签（休闲/娱乐）</h4>
+                            <div class="form-row">
+                                <label>提醒间隔</label>
+                                <input type="number" id="excluded-interval" min="5" max="120" value="30"> 分钟
+                            </div>
+                            <div class="form-row">
+                                <label>提醒方式</label>
+                                <select id="excluded-message-mode">
+                                    <option value="random">随机骚话</option>
+                                    <option value="custom">自定义内容</option>
+                                </select>
+                            </div>
+                            <div class="form-row custom-message-row" id="excluded-custom-row" style="display:none">
+                                <label>自定义内容</label>
+                                <textarea id="excluded-custom-message" rows="2" placeholder="该工作了！"></textarea>
+                            </div>
+                        </div>
+                        <button id="save-reminder-settings" class="btn btn-primary">保存提醒设置</button>
+                    </div>
+                </div>
+                <div class="settings-section">
                     <h3>数据导入</h3>
                     <div id="import-area" class="import-area">
                         <input type="file" id="import-file" accept=".json" hidden>
