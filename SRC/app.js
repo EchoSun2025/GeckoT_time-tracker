@@ -477,9 +477,38 @@ const App = (function() {
             <div class="tag-list-item" data-id="${tag.id}">
                 <span class="tag-color" style="background: ${tag.color}"></span>
                 <span class="tag-name">${tag.name}</span>
+                <span class="tag-type-badge ${tag.isExcluded ? 'excluded' : 'normal'}" title="${tag.isExcluded ? '休息/娱乐（特殊标签，不计入总时间）' : '工作/学习（普通标签，计入总时间）'}">
+                    ${tag.isExcluded ? '休息' : '工作'}
+                </span>
+                <button class="btn-toggle-type" title="${tag.isExcluded ? '切换为工作/学习（计入总时间）' : '切换为休息/娱乐（不计入总时间）'}">
+                    ${tag.isExcluded ? '设为工作' : '设为休息'}
+                </button>
                 <button class="btn-delete" title="删除">×</button>
             </div>
         `).join('');
+
+        // 绑定切换类型事件（工作/休息）
+        elements.tagsList.querySelectorAll('.btn-toggle-type').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.closest('.tag-list-item').dataset.id;
+                const current = tags.find(t => t.id === id);
+                if (!current) return;
+
+                const nextIsExcluded = !current.isExcluded;
+                DataManager.updateTag(id, { isExcluded: nextIsExcluded });
+
+                // 特殊标签永远不计入统计：避免它同时被“手动排除”记住，导致切回普通后仍被排除
+                if (nextIsExcluded) {
+                    state.manuallyExcludedTags = state.manuallyExcludedTags.filter(tagId => tagId !== id);
+                }
+
+                loadTags();
+                updateDailyReport();
+                updateWeeklyReport();
+                updateMonthlyReport();
+                showToast(nextIsExcluded ? '已切换为休息/娱乐（不计入统计）' : '已切换为工作/学习（计入统计）', 'success');
+            });
+        });
 
         // 绑定删除事件
         elements.tagsList.querySelectorAll('.btn-delete').forEach(btn => {

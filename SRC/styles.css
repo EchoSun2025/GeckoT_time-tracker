@@ -1108,6 +1108,42 @@ kbd {
     flex: 1;
 }
 
+.tag-list-item .tag-type-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    user-select: none;
+}
+
+.tag-list-item .tag-type-badge.normal {
+    border-color: rgba(125, 211, 252, 0.35);
+    color: #7dd3fc;
+}
+
+.tag-list-item .tag-type-badge.excluded {
+    border-color: rgba(52, 211, 153, 0.35);
+    color: #34d399;
+}
+
+.tag-list-item .btn-toggle-type {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.tag-list-item .btn-toggle-type:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+}
+
 .tag-list-item .btn-delete {
     background: transparent;
     border: none;
